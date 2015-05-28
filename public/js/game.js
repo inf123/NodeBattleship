@@ -166,7 +166,11 @@ var Game = (function() {
       shipWidth = squareWidth - shipPadding * 2;
       shipLength = squareWidth * ship.size + (gridBorder * (ship.size - 1)) - shipPadding * 2;
 
-      context[gridIndex].fillRect(x, y, shipWidth, shipLength);
+      if(ship.horizontal) {
+        context[gridIndex].fillRect(x, y, shipLength, shipWidth);
+      } else {
+        context[gridIndex].fillRect(x, y, shipWidth, shipLength);
+      }
     }
   };
   
