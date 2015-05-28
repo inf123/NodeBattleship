@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var BattleshipGame = require('./battleshipGame.js');
+var BattleshipGame = require('./app/game.js');
 
 var port = 8900;
 

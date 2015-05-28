@@ -1,3 +1,6 @@
+var Player = require('./player.js');
+var Settings = require('./settings.js');
+
 /**
  * BattleshipGame constructor
  * @param {type} id Game ID
@@ -5,27 +8,14 @@
  * @param {type} idPlayer2 Socket ID of player 2
  */
 function BattleshipGame(id, idPlayer1, idPlayer2) {
-  var i;
-  
-  this.gridRows = 10;
-  this.gridCols = 10;
   this.ships = [ 5, 4, 3, 3, 1 ];
 
   this.id = id;
-  this.playerId = [ idPlayer1, idPlayer2 ]; // Socket ID
   this.currentPlayer = 0;
   this.gameState = 1;
 
-  this.shotsGrid = [
-    Array(this.gridRows*this.gridCols),
-    Array(this.gridRows*this.gridCols)
-  ]
-
-  for(i = 0; i < this.gridRows*this.gridCols; i++) {
-    this.shotsGrid[0][i] = 0;
-    this.shotsGrid[1][i] = 0;
-  }
-};
+  this.players = [new Player(idPlayer1), new Player(idPlayer2)];
+}
 
 /**
  * ID of this game
@@ -41,7 +31,7 @@ BattleshipGame.prototype.getId = function() {
  * @returns {undefined}
  */
 BattleshipGame.prototype.getPlayerId = function(player) {
-  return this.playerId[player];
+  return this.players[player].id;
 };
 
 /**
@@ -66,11 +56,11 @@ BattleshipGame.prototype.switchPlayer = function() {
  */
 BattleshipGame.prototype.shoot = function(position) {
   var opponent = this.currentPlayer === 0 ? 1 : 0,
-      gridIndex = position.y * this.gridCols + position.x;
+      gridIndex = position.y * Settings.gridCols + position.x;
 
-  if(this.shotsGrid[opponent][gridIndex] === 0) {
+  if(this.players[opponent].shots[gridIndex] === 0) {
     // Square has not been shot at yet. Check if hit
-    this.shotsGrid[opponent][gridIndex] = 1;
+    this.players[opponent].shots[gridIndex] = 1;
     this.switchPlayer();
     
     return true;
@@ -101,8 +91,8 @@ BattleshipGame.prototype.getGameState = function(player, gridOwner) {
  */
 BattleshipGame.prototype.getGrid = function(player, hideShips) {
   return {
-    shots: this.shotsGrid[player],
-    ships: {}
+    shots: this.players[player].shots,
+    ships: []
   };
 };
 
