@@ -34,7 +34,6 @@ $(function() {
    * Update player's game state
    */
   socket.on('update', function(gameState) {
-    console.log(gameState);
     Game.setTurn(gameState.turn);
     Game.updateGrid(gameState.gridIndex, gameState.grid);
   });

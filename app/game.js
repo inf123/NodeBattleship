@@ -8,8 +8,6 @@ var Settings = require('./settings.js');
  * @param {type} idPlayer2 Socket ID of player 2
  */
 function BattleshipGame(id, idPlayer1, idPlayer2) {
-  this.ships = [ 5, 4, 3, 3, 1 ];
-
   this.id = id;
   this.currentPlayer = 0;
   this.gameState = 1;
@@ -92,7 +90,7 @@ BattleshipGame.prototype.getGameState = function(player, gridOwner) {
 BattleshipGame.prototype.getGrid = function(player, hideShips) {
   return {
     shots: this.players[player].shots,
-    ships: []
+    ships: hideShips ? this.players[player].getSunkShips() : this.players[player].ships
   };
 };
 

@@ -1,7 +1,9 @@
 var Game = (function() {
   var canvas = [], context = [], grid = [],
       gridHeight = 361, gridWidth = 361, gridBorder = 1,
-      gridRows = 10, gridCols = 10, markPadding = 10,
+      gridRows = 10, gridCols = 10, markPadding = 10, shipPadding = 3,
+      squareHeight = (gridHeight - gridBorder * gridRows - gridBorder) / gridRows,
+      squareWidth = (gridWidth - gridBorder * gridCols - gridBorder) / gridCols,
       turn = false, squareHover = { x: -1, y: -1 };
 
   canvas[0] = document.getElementById('canvas-grid1');    // This player
@@ -123,9 +125,7 @@ var Game = (function() {
    * @param {Number} gridIndex
    */
   function drawSquares(gridIndex) {
-    var i, j, squareX, squareY,
-        squareHeight = (gridHeight - gridBorder * gridRows - gridBorder) / gridRows,
-        squareWidth = (gridWidth - gridBorder * gridCols - gridBorder) / gridCols;
+    var i, j, squareX, squareY;
 
     context[gridIndex].fillStyle = '#222222'
     context[gridIndex].fillRect(0, 0, gridWidth, gridHeight);
@@ -153,7 +153,21 @@ var Game = (function() {
    * @param {Number} gridIndex
    */
   function drawShips(gridIndex) {
+    var ship, i, x, y,
+        shipWidth, shipLength;
+
+    context[gridIndex].fillStyle = '#444444';
     
+    for(i = 0; i < grid[gridIndex].ships.length; i++) {
+      ship = grid[gridIndex].ships[i];
+
+      x = ship.x * (squareWidth + gridBorder) + gridBorder + shipPadding;
+      y = ship.y * (squareHeight + gridBorder) + gridBorder + shipPadding;
+      shipWidth = squareWidth - shipPadding * 2;
+      shipLength = squareWidth * ship.size + (gridBorder * (ship.size - 1)) - shipPadding * 2;
+
+      context[gridIndex].fillRect(x, y, shipWidth, shipLength);
+    }
   };
   
   /**
@@ -161,9 +175,7 @@ var Game = (function() {
    * @param {Number} gridIndex
    */
   function drawMarks(gridIndex) {
-    var i, j, squareX, squareY,
-        squareHeight = (gridHeight - gridBorder * gridRows - gridBorder) / gridRows,
-        squareWidth = (gridWidth - gridBorder * gridCols - gridBorder) / gridCols;
+    var i, j, squareX, squareY;
 
     for(i = 0; i < gridRows; i++) {
       for(j = 0; j < gridCols; j++) {
