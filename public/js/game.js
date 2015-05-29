@@ -195,6 +195,14 @@ var Game = (function() {
           context[gridIndex].lineTo(squareX + markPadding, squareY + squareHeight - markPadding);
           context[gridIndex].stroke();
         }
+        // draw red circle if hit on square
+        else if(grid[gridIndex].shots[i * gridCols + j] === 2) {
+          context[gridIndex].beginPath();
+          context[gridIndex].arc(squareX + squareWidth / 2, squareY + squareWidth / 2,
+                                 squareWidth / 2 - markPadding, 0, 2 * Math.PI, false);
+          context[gridIndex].fillStyle = '#E62E2E';
+          context[gridIndex].fill();
+        }
       }
     }
   };

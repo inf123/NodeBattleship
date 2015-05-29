@@ -57,9 +57,13 @@ BattleshipGame.prototype.shoot = function(position) {
       gridIndex = position.y * Settings.gridCols + position.x;
 
   if(this.players[opponent].shots[gridIndex] === 0) {
-    // Square has not been shot at yet. Check if hit
-    this.players[opponent].shots[gridIndex] = 1;
-    this.switchPlayer();
+    // Square has not been shot at yet.
+    if(!this.players[opponent].shoot(gridIndex)) {
+      // Miss
+      this.switchPlayer();
+    }
+    
+    // @todo check if game over
     
     return true;
   }

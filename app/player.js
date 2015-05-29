@@ -22,6 +22,25 @@ function Player(id) {
 };
 
 /**
+ * Fire shot on grid
+ * @param {type} gridIndex
+ * @returns {Boolean} True if hit
+ */
+Player.prototype.shoot = function(gridIndex) {
+  var shipIndex;
+  if(this.shipGrid[gridIndex] >= 0) {
+    // Hit!
+    this.ships[this.shipGrid[gridIndex]].hits++;
+    this.shots[gridIndex] = 2;
+    return true;
+  } else {
+    // Miss
+    this.shots[gridIndex] = 1;
+    return false;
+  }
+}
+
+/**
  * Get an array of sunk ships
  * @returns {undefined}
  */
@@ -50,7 +69,7 @@ Player.prototype.createShips = function() {
     ship.x = x;
     ship.y = 2;
 
-    // place in shipGrid
+    // place ship array-index in shipGrid
     gridIndex = ship.y * Settings.gridCols + ship.x;
     for(i = 0; i < ship.size; i++) {
       this.shipGrid[gridIndex] = shipIndex;
