@@ -82,3 +82,15 @@ h3 {
     background-color: #f0f0f0;
     border-color: #e9e9e9;
 }
+
+.alert-winner {
+    color: #4d4b00;
+    background-color: #f2f198;
+    border-color: #f2f180;
+}
+
+.alert-loser {
+    color: #4d0000;
+    background-color: #f28080;
+    border-color: #f26868;
+}

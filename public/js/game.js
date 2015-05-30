@@ -1,10 +1,15 @@
+var GameStatus = {
+  inProgress: 1,
+  gameOver: 2
+}
+
 var Game = (function() {
   var canvas = [], context = [], grid = [],
       gridHeight = 361, gridWidth = 361, gridBorder = 1,
       gridRows = 10, gridCols = 10, markPadding = 10, shipPadding = 3,
       squareHeight = (gridHeight - gridBorder * gridRows - gridBorder) / gridRows,
       squareWidth = (gridWidth - gridBorder * gridCols - gridBorder) / gridCols,
-      turn = false, squareHover = { x: -1, y: -1 };
+      turn = false, gameStatus, squareHover = { x: -1, y: -1 };
 
   canvas[0] = document.getElementById('canvas-grid1');    // This player
   canvas[1] = document.getElementById('canvas-grid2');    // Opponent
@@ -72,14 +77,20 @@ var Game = (function() {
   function initGame() {
     var i;
 
+    gameStatus = GameStatus.inProgress;
+    
     // Create empty grids for player and opponent
-    grid[0] = { shots: Array(gridRows * gridCols), ships: {} };
-    grid[1] = { shots: Array(gridRows * gridCols), ships: {} };
+    grid[0] = { shots: Array(gridRows * gridCols), ships: [] };
+    grid[1] = { shots: Array(gridRows * gridCols), ships: [] };
 
     for(i = 0; i < gridRows * gridCols; i++) {
       grid[0].shots[i] = 0;
       grid[1].shots[i] = 0;
     }
+
+    // Reset turn status classes
+    $('#turn-status').removeClass('alert-your-turn').removeClass('alert-opponent-turn')
+            .removeClass('alert-winner').removeClass('alert-loser');
 
     drawGrid(0);
     drawGrid(1);
@@ -102,14 +113,33 @@ var Game = (function() {
    * @returns {undefined}
    */
   function setTurn(turnState) {
-    turn = turnState;
+    if(gameStatus !== GameStatus.gameOver) {
+      turn = turnState;
 
-    if(turn) {
-      $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('It\'s your turn!');
-    } else {
-      $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Waiting for opponent.');
+      if(turn) {
+        $('#turn-status').removeClass('alert-opponent-turn').addClass('alert-your-turn').html('It\'s your turn!');
+      } else {
+        $('#turn-status').removeClass('alert-your-turn').addClass('alert-opponent-turn').html('Waiting for opponent.');
+      }
     }
   };
+
+  /**
+   * Set game over and show winning/losing message
+   * @param {Boolean} isWinner
+   */
+  function setGameOver(isWinner) {
+    gameStatus = GameStatus.gameOver;
+    turn = false;
+    
+    if(isWinner) {
+      $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
+              .addClass('alert-winner').html('You won!');
+    } else {
+      $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
+              .addClass('alert-loser').html('You lost.');
+    }
+  }
 
   /*
    * Draw a grid with squares, ships and shot marks
@@ -210,6 +240,7 @@ var Game = (function() {
   return {
     'initGame': initGame,
     'updateGrid': updateGrid,
-    'setTurn': setTurn
+    'setTurn': setTurn,
+    'setGameOver': setGameOver
   };
 })();

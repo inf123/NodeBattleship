@@ -1,5 +1,6 @@
 var Player = require('./player.js');
 var Settings = require('./settings.js');
+var GameStatus = require('./gameStatus.js');
 
 /**
  * BattleshipGame constructor
@@ -10,18 +11,11 @@ var Settings = require('./settings.js');
 function BattleshipGame(id, idPlayer1, idPlayer2) {
   this.id = id;
   this.currentPlayer = 0;
-  this.gameState = 1;
+  this.winningPlayer = null;
+  this.gameStatus = GameStatus.inProgress;
 
   this.players = [new Player(idPlayer1), new Player(idPlayer2)];
 }
-
-/**
- * ID of this game
- * @returns {Number} Game ID
- */
-BattleshipGame.prototype.getId = function() {
-  return this.id;
-};
 
 /**
  * Get socket ID of player
@@ -33,11 +27,26 @@ BattleshipGame.prototype.getPlayerId = function(player) {
 };
 
 /**
- * Check whose turn it is.
- * @returns {Number} Current player
+ * Get socket ID of winning player
+ * @returns {BattleshipGame.prototype@arr;players@pro;id}
  */
-BattleshipGame.prototype.getCurrentPlayer = function() {
-  return this.currentPlayer;
+BattleshipGame.prototype.getWinnerId = function() {
+  if(this.winningPlayer === null) {
+    return null;
+  }
+  return this.players[this.winningPlayer].id;
+};
+
+/**
+ * Get socket ID of losing player
+ * @returns {BattleshipGame.prototype@arr;players@pro;id}
+ */
+BattleshipGame.prototype.getLoserId = function() {
+  if(this.winningPlayer === null) {
+    return null;
+  }
+  var loser = this.winningPlayer === 0 ? 1 : 0;
+  return this.players[loser].id;
 };
 
 /**
@@ -56,14 +65,18 @@ BattleshipGame.prototype.shoot = function(position) {
   var opponent = this.currentPlayer === 0 ? 1 : 0,
       gridIndex = position.y * Settings.gridCols + position.x;
 
-  if(this.players[opponent].shots[gridIndex] === 0) {
+  if(this.players[opponent].shots[gridIndex] === 0 && this.gameStatus === GameStatus.inProgress) {
     // Square has not been shot at yet.
     if(!this.players[opponent].shoot(gridIndex)) {
       // Miss
       this.switchPlayer();
     }
-    
-    // @todo check if game over
+
+    // Check if game over
+    if(this.players[opponent].getShipsLeft() <= 0) {
+      this.gameStatus = GameStatus.gameOver;
+      this.winningPlayer = opponent === 0 ? 1 : 0;
+    }
     
     return true;
   }
@@ -79,7 +92,7 @@ BattleshipGame.prototype.shoot = function(position) {
  */
 BattleshipGame.prototype.getGameState = function(player, gridOwner) {
   return {
-    turn: this.getCurrentPlayer() === player,            // is it this player's turn?
+    turn: this.currentPlayer === player,                 // is it this player's turn?
     gridIndex: player === gridOwner ? 0 : 1,             // which client grid to update (0 = own, 1 = opponent)
     grid: this.getGrid(gridOwner, player !== gridOwner)  // hide unsunk ships if this is not own grid
   };

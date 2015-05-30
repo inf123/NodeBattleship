@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var BattleshipGame = require('./app/game.js');
+var GameStatus = require('./app/gameStatus.js');
 
 var port = 8900;
 
@@ -36,7 +37,7 @@ io.on('connection', function(socket) {
       console.log((new Date().toISOString()) + ' Chat message from ' + socket.id + ': ' + msg);
       
       // Send message to opponent
-      socket.broadcast.to('game' + users[socket.id].inGame.getId()).emit('chat', {
+      socket.broadcast.to('game' + users[socket.id].inGame.id).emit('chat', {
         name: 'Opponent',
         message: msg,
       });
@@ -57,11 +58,19 @@ io.on('connection', function(socket) {
 
     if(game !== null) {
       // Is it this users turn?
-      if(game.getCurrentPlayer() === users[socket.id].player) {
-        opponent = game.getCurrentPlayer() === 0 ? 1 : 0;
+      if(game.currentPlayer === users[socket.id].player) {
+        opponent = game.currentPlayer === 0 ? 1 : 0;
 
         if(game.shoot(position)) {
-          // shot was valid. Update game state on both clients.
+          // Valid shot
+          
+          if(game.gameStatus === GameStatus.gameOver) {
+            console.log((new Date().toISOString()) + ' Game ID ' + game.id + ' ended.');
+            io.to(game.getWinnerId()).emit('gameover', true);
+            io.to(game.getLoserId()).emit('gameover', false);
+          }
+
+          // Update game state on both clients.
           io.to(socket.id).emit('update', game.getGameState(users[socket.id].player, opponent));
           io.to(game.getPlayerId(opponent)).emit('update', game.getGameState(opponent, opponent));
         }
@@ -99,26 +108,26 @@ function joinWaitingPlayers() {
     // create new room for this game
     players[0].leave('waiting room');
     players[1].leave('waiting room');
-    players[0].join('game' + game.getId());
-    players[1].join('game' + game.getId());
+    players[0].join('game' + game.id);
+    players[1].join('game' + game.id);
 
     users[players[0].id].player = 0;
     users[players[1].id].player = 1;
     users[players[0].id].inGame = game;
     users[players[1].id].inGame = game;
     
-    io.to('game' + game.getId()).emit('join', game.getId());
+    io.to('game' + game.id).emit('join', game.id);
 
     // send initial ship placements
     io.to(players[0].id).emit('update', game.getGameState(0, 0));
     io.to(players[1].id).emit('update', game.getGameState(1, 1));
 
-    console.log((new Date().toISOString()) + " " + players[0].id + " and " + players[1].id + " has joined game ID " + game.getId());
+    console.log((new Date().toISOString()) + " " + players[0].id + " and " + players[1].id + " has joined game ID " + game.id);
   }
 }
 
 function endGame(game) {
-  io.to('game' + game.getId()).emit('gameover', game.getId());
+  io.to('game' + game.id).emit('gameover', game.id);
 }
 
 /**

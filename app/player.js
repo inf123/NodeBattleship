@@ -60,6 +60,22 @@ Player.prototype.getSunkShips = function() {
 };
 
 /**
+ * Get the number of ships left
+ * @returns {Number} Number of ships left
+ */
+Player.prototype.getShipsLeft = function() {
+  var i, shipCount = 0;
+
+  for(i = 0; i < this.ships.length; i++) {
+    if(!this.ships[i].isSunk()) {
+      shipCount++;
+    }
+  }
+
+  return shipCount;
+}
+
+/**
  * Create ships and place them randomly in grid
  * @returns {Boolean}
  */

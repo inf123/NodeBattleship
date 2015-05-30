@@ -46,8 +46,11 @@ $(function() {
     $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
   })
 
-  socket.on('gameover', function() {
-
+  /**
+   * Change game status to game over
+   */
+  socket.on('gameover', function(isWinner) {
+    Game.setGameOver(isWinner);
   });
   
   /**
