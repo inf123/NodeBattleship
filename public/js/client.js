@@ -25,6 +25,8 @@ $(function() {
    */
   socket.on('join', function(gameId) {
     Game.initGame();
+    $('#messages').empty();
+    $('#disconnected').hide();
     $('#waiting-room').hide();
     $('#game').show();
     $('#game-number').html(gameId);

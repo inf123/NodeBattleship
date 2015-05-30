@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
 
 var BattleshipGame = require('./app/game.js');
 var GameStatus = require('./app/gameStatus.js');
@@ -39,13 +41,13 @@ io.on('connection', function(socket) {
       // Send message to opponent
       socket.broadcast.to('game' + users[socket.id].inGame.id).emit('chat', {
         name: 'Opponent',
-        message: msg,
+        message: entities.encode(msg),
       });
 
       // Send message to self
       io.to(socket.id).emit('chat', {
         name: 'Me',
-        message: msg,
+        message: entities.encode(msg),
       });
     }
   });
