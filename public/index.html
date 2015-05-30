@@ -46,11 +46,6 @@
                             <div class="panel-heading">Battleship Game #<span id="game-number"></span></div>
                             <div class="panel-body">
 
-                                <div class="row">
-                                    <div class="col-md-4 col-md-offset-4">
-                                        <div id="turn-status" class="alert alert-your-turn text-center">Your turn!</div>
-                                    </div>
-                                </div>
                                 <!-- Player grids -->
                                 <div class="row">
                                     <div class="col-md-6 player-grid text-center">
@@ -66,15 +61,16 @@
                                 
                             </div>
 
-                            <!-- Chat -->
                             <ul class="list-group">
+                                <!-- Status -->
+                                <li class="list-group-item text-center" id="turn-status"></li>
 
-                                <!-- Messages -->
+                                <!-- Chat messages -->
                                 <li class="list-group-item" id="messages-list">
                                     <ul id="messages"></ul>
                                 </li>
 
-                                <!-- Send message form -->
+                                <!-- Send chat message form -->
                                 <li class="list-group-item">
                                     <form id="message-form" action="">
                                         <div class="input-group">

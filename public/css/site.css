@@ -12,7 +12,7 @@ html, body, .container {
 }
 
 h3 {
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 .panel, .panel-heading {
@@ -39,7 +39,7 @@ h3 {
 #messages-list {
     height: 95px;
     overflow-y: scroll;
-    margin-top: 15px;
+    margin-top: 5px;
 }
 
 #messages {
@@ -67,9 +67,8 @@ h3 {
 }
 
 #turn-status {
-    padding: 0px;
-    margin: 0px;
-    border-radius: 0px;
+    padding: 10px 0px;
+    margin: 25px 0 0 0;
 }
 
 .alert-your-turn {
