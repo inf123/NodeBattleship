@@ -57,6 +57,16 @@ BattleshipGame.prototype.switchPlayer = function() {
 };
 
 /**
+ * Abort game
+ * @param {Number} player Player who made the request
+ */
+BattleshipGame.prototype.abortGame = function(player) {
+  // give win to opponent
+  this.gameStatus = GameStatus.gameOver;
+  this.winningPlayer = player === 0 ? 1 : 0;
+}
+
+/**
  * Fire shot for current player
  * @param {Object} position with x and y
  * @returns {boolean} True if shot was valid

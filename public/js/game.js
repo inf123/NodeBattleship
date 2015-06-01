@@ -134,11 +134,12 @@ var Game = (function() {
     
     if(isWinner) {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-winner').html('You won!');
+              .addClass('alert-winner').html('You won! <a href="#" class="btn-leave-game">Play again</a>.');
     } else {
       $('#turn-status').removeClass('alert-opponent-turn').removeClass('alert-your-turn')
-              .addClass('alert-loser').html('You lost.');
+              .addClass('alert-loser').html('You lost. <a href="#" class="btn-leave-game">Play again</a>.');
     }
+    $('.btn-leave-game').click(sendLeaveRequest);
   }
 
   /*

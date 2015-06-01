@@ -78,6 +78,11 @@ h3 {
     margin: 25px 0 0 0;
 }
 
+#turn-status a {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .alert-your-turn {
     color: #31708f;
     background-color: #d9edf7;

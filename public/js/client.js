@@ -46,7 +46,15 @@ $(function() {
   socket.on('chat', function(msg) {
     $('#messages').append('<li><strong>' + msg.name + ':</strong> ' + msg.message + '</li>');
     $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
-  })
+  });
+
+  /**
+   * Game notification
+   */
+  socket.on('notification', function(msg) {
+    $('#messages').append('<li>' + msg.message + '</li>');
+    $('#messages-list').scrollTop($('#messages-list')[0].scrollHeight);
+  });
 
   /**
    * Change game status to game over
@@ -55,6 +63,14 @@ $(function() {
     Game.setGameOver(isWinner);
   });
   
+  /**
+   * Leave game and join waiting room
+   */
+  socket.on('leave', function() {
+    $('#game').hide();
+    $('#waiting-room').show();
+  });
+
   /**
    * Send chat message to server
    */
@@ -66,6 +82,19 @@ $(function() {
 
 });
 
+/**
+ * Send leave game request
+ * @param {type} e Event
+ */
+function sendLeaveRequest(e) {
+  e.preventDefault();
+  socket.emit('leave');
+}
+
+/**
+ * Send shot coordinates to server
+ * @param {type} square
+ */
 function sendShot(square) {
   socket.emit('shot', square);
 }

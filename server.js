@@ -65,12 +65,7 @@ io.on('connection', function(socket) {
 
         if(game.shoot(position)) {
           // Valid shot
-          
-          if(game.gameStatus === GameStatus.gameOver) {
-            console.log((new Date().toISOString()) + ' Game ID ' + game.id + ' ended.');
-            io.to(game.getWinnerId()).emit('gameover', true);
-            io.to(game.getLoserId()).emit('gameover', false);
-          }
+          checkGameOver(game);
 
           // Update game state on both clients.
           io.to(socket.id).emit('update', game.getGameState(users[socket.id].player, opponent));
@@ -81,15 +76,24 @@ io.on('connection', function(socket) {
   });
   
   /**
+   * Handle leave game request
+   */
+  socket.on('leave', function() {
+    if(users[socket.id].inGame !== null) {
+      leaveGame(socket);
+
+      socket.join('waiting room');
+      joinWaitingPlayers();
+    }
+  });
+
+  /**
    * Handle client disconnect
    */
   socket.on('disconnect', function() {
     console.log((new Date().toISOString()) + ' ID ' + socket.id + ' disconnected.');
     
-    if(users[socket.id].inGame !== null) {
-      // If user is in a game, end it.
-      endGame(users[socket.id].inGame);
-    }
+    leaveGame(socket);
 
     delete users[socket.id];
   });
@@ -128,8 +132,44 @@ function joinWaitingPlayers() {
   }
 }
 
-function endGame(game) {
-  io.to('game' + game.id).emit('gameover', game.id);
+/**
+ * Leave user's game
+ * @param {type} socket
+ */
+function leaveGame(socket) {
+  if(users[socket.id].inGame !== null) {
+    console.log((new Date().toISOString()) + ' ID ' + socket.id + ' left game ID ' + users[socket.id].inGame.id);
+
+    // Notifty opponent
+    socket.broadcast.to('game' + users[socket.id].inGame.id).emit('notification', {
+      message: 'Opponent has left the game'
+    });
+
+    if(users[socket.id].inGame.gameStatus !== GameStatus.gameOver) {
+      // Game is unfinished, abort it.
+      users[socket.id].inGame.abortGame(users[socket.id].player);
+      checkGameOver(users[socket.id].inGame);
+    }
+
+    socket.leave('game' + users[socket.id].inGame.id);
+
+    users[socket.id].inGame = null;
+    users[socket.id].player = null;
+
+    io.to(socket.id).emit('leave');
+  }
+}
+
+/**
+ * Notify players if game over.
+ * @param {type} game
+ */
+function checkGameOver(game) {
+  if(game.gameStatus === GameStatus.gameOver) {
+    console.log((new Date().toISOString()) + ' Game ID ' + game.id + ' ended.');
+    io.to(game.getWinnerId()).emit('gameover', true);
+    io.to(game.getLoserId()).emit('gameover', false);
+  }
 }
 
 /**
