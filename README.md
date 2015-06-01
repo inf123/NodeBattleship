@@ -1,4 +1,4 @@
-## NodeBattleship
+# NodeBattleship
 
 NodeBattleship is a multiplayer Battleship game made with Node.js and socket.io.
 At the start of the game, five ships of different sizes are placed randomly in a 10 x 10 grid.
@@ -7,7 +7,7 @@ the opponent's ships.
 
 ![Battleship screenshot](http://inf123.github.io/battleship-screenshot.png)
 
-# Install
+## Install
 
 Step 1: Download/clone.
 ```
