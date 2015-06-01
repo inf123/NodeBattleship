@@ -124,7 +124,7 @@ function joinWaitingPlayers() {
     io.to(players[0].id).emit('update', game.getGameState(0, 0));
     io.to(players[1].id).emit('update', game.getGameState(1, 1));
 
-    console.log((new Date().toISOString()) + " " + players[0].id + " and " + players[1].id + " has joined game ID " + game.id);
+    console.log((new Date().toISOString()) + " " + players[0].id + " and " + players[1].id + " have joined game ID " + game.id);
   }
 }
 
