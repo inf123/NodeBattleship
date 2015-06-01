@@ -224,6 +224,7 @@ var Game = (function() {
           context[gridIndex].lineTo(squareX + squareWidth - markPadding, squareY + squareHeight - markPadding);
           context[gridIndex].moveTo(squareX + squareWidth - markPadding, squareY + markPadding);
           context[gridIndex].lineTo(squareX + markPadding, squareY + squareHeight - markPadding);
+          context[gridIndex].strokeStyle = '#000000';
           context[gridIndex].stroke();
         }
         // draw red circle if hit on square

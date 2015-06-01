@@ -81,7 +81,7 @@ Player.prototype.getShipsLeft = function() {
  */
 Player.prototype.createRandomShips = function() {
   var shipIndex;
-  
+
   for(shipIndex = 0; shipIndex < Settings.ships.length; shipIndex++) {
     ship = new Ship(Settings.ships[shipIndex]);
   
@@ -102,9 +102,9 @@ Player.prototype.createRandomShips = function() {
  * @returns {Boolean}
  */
 Player.prototype.placeShipRandom = function(ship, shipIndex) {
-  var i, gridIndex, xMax, yMax;
-  // retry 20 times max
-  for(i = 0; i < 20; i++) {
+  var i, j, gridIndex, xMax, yMax, tryMax = 25;
+
+  for(i = 0; i < tryMax; i++) {
     ship.horizontal = Math.random() < 0.5;
 
     xMax = ship.horizontal ? Settings.gridCols - ship.size + 1 : Settings.gridCols;
@@ -113,11 +113,11 @@ Player.prototype.placeShipRandom = function(ship, shipIndex) {
     ship.x = Math.floor(Math.random() * xMax);
     ship.y = Math.floor(Math.random() * yMax);
 
-    if(!this.checkShipOverlap(ship)) {
-      // success - ship does not overlap
+    if(!this.checkShipOverlap(ship) && !this.checkShipAdjacent(ship)) {
+      // success - ship does not overlap or is adjacent to other ships
       // place ship array-index in shipGrid
       gridIndex = ship.y * Settings.gridCols + ship.x;
-      for(i = 0; i < ship.size; i++) {
+      for(j = 0; j < ship.size; j++) {
         this.shipGrid[gridIndex] = shipIndex;
         gridIndex += ship.horizontal ? 1 : Settings.gridCols;
       }
@@ -147,16 +147,43 @@ Player.prototype.checkShipOverlap = function(ship) {
 }
 
 /**
- * Create ships and place them in grid
+ * Check if there are ships adjacent to this ship placement
+ * @param {Ship} ship
+ * @returns {Boolean} True if adjacent ship found
+ */
+Player.prototype.checkShipAdjacent = function(ship) {
+  var i, j, 
+      x1 = ship.x - 1,
+      y1 = ship.y - 1,
+      x2 = ship.horizontal ? ship.x + ship.size : ship.x + 1,
+      y2 = ship.horizontal ? ship.y + 1 : ship.y + ship.size;
+
+  for(i = x1; i <= x2; i++) {
+    if(i < 0 || i > Settings.gridCols - 1) continue;
+    for(j = y1; j <= y2; j++) {
+      if(j < 0 || j > Settings.gridRows - 1) continue;
+      if(this.shipGrid[j * Settings.gridCols + i] >= 0) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Create ships and place them in grid in a prearranged layout
  */
 Player.prototype.createShips = function() {
-  var shipIndex, i, gridIndex, x = 1, ship;
+  var shipIndex, i, gridIndex, ship,
+      x = [1, 3, 5, 8, 8], y = [1, 2, 5, 2, 8],
+      horizontal = [false, true, false, false, true];
 
   for(shipIndex = 0; shipIndex < Settings.ships.length; shipIndex++) {
     ship = new Ship(Settings.ships[shipIndex]);
-    ship.horizontal = false;
-    ship.x = x;
-    ship.y = 2;
+    ship.horizontal = horizontal[shipIndex];
+    ship.x = x[shipIndex];
+    ship.y = y[shipIndex];
 
     // place ship array-index in shipGrid
     gridIndex = ship.y * Settings.gridCols + ship.x;
@@ -166,8 +193,6 @@ Player.prototype.createShips = function() {
     }
 
     this.ships.push(ship);
-
-    x += 2;
   }
 };
 
