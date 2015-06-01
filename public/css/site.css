@@ -1,6 +1,7 @@
+/* Disable bootstrap 1200px */
 @media (min-width: 1200px) {
     .container {
-        width: 970px;  /*change 1170 to 970*/
+        width: 970px;
     }
 }
 
@@ -78,10 +79,9 @@ h3 {
 }
 
 .alert-your-turn {
-    color: #3c763d;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
-    color:#31708f;background-color:#d9edf7;border-color:#bce8f1;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
 }
 
 .alert-opponent-turn {
@@ -91,15 +91,13 @@ h3 {
 }
 
 .alert-winner {
-    color: #4d4b00;
-    background-color: #f2f198;
-    border-color: #f2f180;
-    color:#3c763d;background-color:#dff0d8;border-color:#d6e9c6;
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
 }
 
 .alert-loser {
-    color: #4d0000;
-    background-color: #f28080;
-    border-color: #f26868;
-    color:#a94442;background-color:#f2dede;border-color:#ebccd1;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
 }
